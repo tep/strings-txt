@@ -8,12 +8,27 @@ import (
 )
 
 var (
-	TabWidth   = 2
-	LineJoiner = "\n"
+	TabWidth      = 2
+	LineSeparator = "\n"
 )
 
-// Fit returns a transformed version of s with leading blank lines removed and
-// a common width of leading whitespace removed from each subsequent.
+// Fit the results of transforming the string s, on a line-by-line basis, in
+// the following manner:
+//
+//   * All TAB characters are replaced with a TabWidth length sequence
+//     of SPACE characters.
+//
+//   * The length of the leading whitespace for the first non-blank
+//     line is recorded then the whitespace characters are removed.
+//
+//   * Leading whitespace, up to the recorded length)  on subsequent
+//     lines is also removed.
+//
+//   * Trailing whitespace on ALL lines is removed.
+//
+//   * All lines are then joined using LineSeparator and a final
+//     LineSeparator is appended to the end.
+//
 // The intended use is to allow long, multi-line, raw strings in Go source code
 // (using `back-quoted text`) to be indented in a normal fashion (as gofmt is
 // wont to do) but the resulting string value to not be indented.
@@ -50,7 +65,7 @@ func Fit(s string) string {
 		lines = append(lines, strings.TrimRightFunc(l, unicode.IsSpace))
 	}
 
-	return strings.TrimSpace(strings.Join(lines, LineJoiner)) + "\n"
+	return strings.TrimSpace(strings.Join(lines, LineSeparator)) + LineSeparator
 }
 
 func isOnlySpaces(s string) bool {
